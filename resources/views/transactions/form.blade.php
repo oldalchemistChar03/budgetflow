@@ -182,6 +182,14 @@
 
                 <label>Notes</label>
                 <textarea name="notes" rows="2" placeholder="Optional note..."></textarea>
+                <label>Recurring?</label>
+                <select name="recurring">
+                    <option value="none" selected>None</option>
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+
 
                 <button class="submit-btn" type="submit">
                     Add {{ ucfirst($type) }}

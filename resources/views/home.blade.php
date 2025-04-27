@@ -12,12 +12,10 @@
             background-color: #0e0e11;
             color: white;
             padding-bottom: 80px;
-
         }
 
         .container {
             max-width: 1000px;
-
             margin: 0 auto;
             padding: 20px;
         }
@@ -33,7 +31,6 @@
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-
         }
 
         .balance {
@@ -95,7 +92,6 @@
             font-size: 20px;
         }
     </style>
-
 </head>
 
 <body>
@@ -131,16 +127,34 @@
         </div>
 
         <div class="card">
-            <div class="section-title">Categories</div>
-            <div class="chart-wrapper">
-                <canvas id="donutChart"></canvas>
+            <div class="section-title">Spending by Category (Donut)</div>
+            <div class="chart-wrapper" style="height: 250px; display: flex; justify-content: center;">
+                <canvas id="donutChart" width="250" height="250"></canvas>
             </div>
 
-            <button id="downloadChartBtn"
-                style="margin-top: 20px; background: #7366ff; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">
-                ⬇️ Download Chart as Image
-            </button>
+            <div style="text-align: center;">
+                <button id="downloadDonutBtn"
+                    style="margin-top: 20px; background: #7366ff; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">
+                    ⬇️ Download Donut Chart
+                </button>
+            </div>
         </div>
+
+        <div class="card">
+            <div class="section-title">Spending by Category (Bar Graph)</div>
+            <div class="chart-wrapper" style="height: 300px; display: flex; justify-content: center;">
+                <canvas id="barChart" width="400" height="300"></canvas>
+            </div>
+
+            <div style="text-align: center;">
+                <button id="downloadBarBtn"
+                    style="margin-top: 20px; background: #7366ff; color: white; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;">
+                    ⬇️ Download Bar Chart
+                </button>
+            </div>
+        </div>
+
+
     </div>
 
     <div class="bottom-nav">
@@ -159,8 +173,6 @@
     </div>
 
     <script>
-        const ctx = document.getElementById('donutChart').getContext('2d');
-
         const categories = {!! json_encode($categorySpend->pluck('category.name')) !!};
         const amounts = {!! json_encode($categorySpend->pluck('total')) !!};
 
@@ -170,7 +182,9 @@
             '#9c27b0', '#00bcd4'
         ];
 
-        const donutChart = new Chart(ctx, {
+        // Donut Chart
+        const donutCtx = document.getElementById('donutChart').getContext('2d');
+        const donutChart = new Chart(donutCtx, {
             type: 'doughnut',
             data: {
                 labels: categories,
@@ -182,33 +196,58 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
                 cutout: '70%',
                 plugins: {
                     legend: {
                         position: 'bottom',
-                        labels: {
-                            color: '#fff',
-                            font: { size: 12 }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function (context) {
-                                const label = context.label || '';
-                                const value = context.parsed || 0;
-                                return `${label}: $${value.toLocaleString()}`;
-                            }
-                        }
+                        labels: { color: '#fff' }
                     }
                 }
             }
         });
 
-        document.getElementById('downloadChartBtn').addEventListener('click', function () {
+        // Bar Chart
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: categories,
+                datasets: [{
+                    label: 'Amount Spent ($)',
+                    data: amounts,
+                    backgroundColor: colors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        ticks: { color: '#ccc' }
+                    },
+                    y: {
+                        ticks: { color: '#ccc', beginAtZero: true },
+                        grid: { color: '#333' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Download buttons
+        document.getElementById('downloadDonutBtn').addEventListener('click', function () {
             const link = document.createElement('a');
-            link.download = 'categories_chart.png';
+            link.download = 'donut_chart.png';
             link.href = document.getElementById('donutChart').toDataURL('image/png');
+            link.click();
+        });
+
+        document.getElementById('downloadBarBtn').addEventListener('click', function () {
+            const link = document.createElement('a');
+            link.download = 'bar_chart.png';
+            link.href = document.getElementById('barChart').toDataURL('image/png');
             link.click();
         });
     </script>

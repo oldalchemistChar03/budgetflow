@@ -49,8 +49,6 @@ class TransactionController extends Controller
         if (!$user) {
             return redirect('/login')->withErrors('You must be logged in.');
         }
-
-
         $user->transactions()->create([
             'amount' => $request->amount,
             'type' => $request->type,
@@ -59,7 +57,13 @@ class TransactionController extends Controller
             'payment_method' => $request->payment_method,
             'subcategory' => $request->subcategory,
             'notes' => $request->notes,
+            'recurring' => $request->recurring ?? 'none',
+            'next_due_date' => $request->recurring !== 'none' ? now()->parse($request->date)->addDays(
+                $request->recurring === 'daily' ? 1 :
+                ($request->recurring === 'weekly' ? 7 : 30)
+            ) : null,
         ]);
+
 
         return redirect()->route('home')->with('success', 'Transaction added successfully!');
     }

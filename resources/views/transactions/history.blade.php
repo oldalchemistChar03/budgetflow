@@ -81,6 +81,22 @@
             color: #aaa;
         }
 
+        .download-button {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .download-button a {
+            background: #7366ff;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -111,7 +127,7 @@
     <div class="container">
         <div class="header">
             <h2>Transaction History</h2>
-            <div class="balance">$ {{ number_format($totalBudget, 2) }}</div>
+            <div class="balance">${{ number_format($totalBudget, 2) }}</div>
             <div class="progress-bar">
                 <div class="progress" style="width: {{ $budget > 0 ? min(($spent / $budget) * 100, 100) : 0 }}%"></div>
             </div>
@@ -136,12 +152,13 @@
                 </div>
             @endforeach
         @endforeach
-    </div>
-    <a href="{{ route('transactions.download') }}"
-        style="background: #7366ff; padding: 10px 20px; color: white; border-radius: 8px; text-decoration: none;">
-        ⬇️ Download CSV
-    </a>
 
+        <div class="download-button">
+            <a href="{{ route('report.download') }}">
+                ⬇️ Download Full Report
+            </a>
+        </div>
+    </div>
 
     <div class="bottom-nav">
         <a href="{{ route('home') }}" class="nav-item">
