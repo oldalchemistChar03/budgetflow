@@ -53,4 +53,18 @@ class BudgetController extends Controller
 
         return redirect()->route('budgets')->with('success', 'Budget added successfully!');
     }
+    public function destroy($id)
+    {
+        $budget = Budget::findOrFail($id);
+
+        // Optional: Check if this budget belongs to the logged-in user
+        if ($budget->user_id !== auth()->id()) {
+            abort(403); // Forbidden
+        }
+
+        $budget->delete();
+        return redirect()->route('budgets')->with('success', 'Budget deleted successfully.');
+    }
+
+
 }

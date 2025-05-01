@@ -129,6 +129,20 @@ class TransactionController extends Controller
 
         return response()->stream($callback, 200, $headers);
     }
+    public function destroy($id)
+    {
+        $transaction = \App\Models\Transaction::findOrFail($id);
+
+        // Optional: check if it belongs to the logged-in user
+        if ($transaction->user_id !== auth()->id()) {
+            return redirect()->back()->withErrors('Unauthorized');
+        }
+
+        $transaction->delete();
+
+        return redirect()->back()->with('success', 'Transaction deleted successfully.');
+    }
+
 
 
 }

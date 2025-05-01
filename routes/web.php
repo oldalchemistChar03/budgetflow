@@ -63,3 +63,5 @@ Route::get('/recurring/check', function () {
 
 
 Route::get('/report/download', [ReportController::class, 'download'])->name('report.download');
+Route::delete('/transactions/{id}', [App\Http\Controllers\TransactionController::class, 'destroy'])->name('transaction.destroy');
+Route::delete('/budgets/{id}', [BudgetController::class, 'destroy'])->name('budgets.destroy');

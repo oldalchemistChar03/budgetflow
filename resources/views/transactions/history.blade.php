@@ -81,9 +81,21 @@
             color: #aaa;
         }
 
+        .delete-form {
+            margin-left: 15px;
+        }
+
+        .delete-form button {
+            background: none;
+            border: none;
+            color: #ff4444;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
         .download-button {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 40px;
         }
 
         .download-button a {
@@ -131,7 +143,7 @@
             <div class="progress-bar">
                 <div class="progress" style="width: {{ $budget > 0 ? min(($spent / $budget) * 100, 100) : 0 }}%"></div>
             </div>
-            <small>{{ number_format($budget - $spent, 2) }} left</small>
+            <small>${{ number_format($budget - $spent, 2) }} left</small>
         </div>
 
         <div class="section-title">Last Records</div>
@@ -145,9 +157,18 @@
                         <div>{{ $transaction->category->name ?? 'Unknown Category' }}</div>
                         <div class="transaction-category">{{ $transaction->payment_method ?? 'N/A' }}</div>
                     </div>
-                    <div
-                        class="transaction-amount {{ $transaction->type === 'income' ? 'transaction-income' : 'transaction-expense' }}">
-                        {{ $transaction->type === 'income' ? '+' : '-' }}${{ number_format($transaction->amount, 2) }}
+
+                    <div style="display: flex; align-items: center;">
+                        <div
+                            class="transaction-amount {{ $transaction->type === 'income' ? 'transaction-income' : 'transaction-expense' }}">
+                            {{ $transaction->type === 'income' ? '+' : '-' }}${{ number_format($transaction->amount, 2) }}
+                        </div>
+                        <form action="{{ route('transaction.destroy', $transaction->transaction_id) }}" method="POST"
+                            class="delete-form" onsubmit="return confirm('Delete this transaction?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" title="Delete">🗑</button>
+                        </form>
                     </div>
                 </div>
             @endforeach
